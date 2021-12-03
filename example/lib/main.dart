@@ -70,7 +70,15 @@ class _MyAppState extends State<MyApp> {
               shrinkWrap: true,
                 itemCount: mContacts!.length,
                 itemBuilder: (context,index){
-                return Text(mContacts![index]);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  child: Column(
+                    children: [
+                      Text(mContacts![index]["Name"]),
+                      Text(mContacts![index]["Phone"]),
+                    ],
+                  ),
+                );
                 })
           ],
         )

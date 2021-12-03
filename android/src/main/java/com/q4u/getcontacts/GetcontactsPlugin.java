@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.flutter.Log;
@@ -53,7 +54,7 @@ public class GetcontactsPlugin implements FlutterPlugin, MethodCallHandler ,Acti
     else if (call.method.equals("getContactList")) {
       Log.e("mPlugin","Pass");
       //Log.e("mPlugin",getAllContacts().toString());
-      ArrayList<String> nList = getAllContacts();
+      ArrayList<HashMap> nList = getAllContacts();
       /*
       ArrayList<String> nList = new ArrayList<>();
       nList.add("Amit");
@@ -73,8 +74,8 @@ public class GetcontactsPlugin implements FlutterPlugin, MethodCallHandler ,Acti
     channel.setMethodCallHandler(null);
   }
 
-  public ArrayList getAllContacts() {
-    ArrayList<String> nameList = new ArrayList<>();
+  public ArrayList<HashMap> getAllContacts() {
+    ArrayList<HashMap> nameList = new ArrayList<>();
     //Log.e("mPlugin",context.toString());
     //Log.e("mPlugin",activity.toString());
     ContentResolver cr = context.getContentResolver();
@@ -84,9 +85,9 @@ public class GetcontactsPlugin implements FlutterPlugin, MethodCallHandler ,Acti
       while (cur != null && cur.moveToNext()) {
         String id = cur.getString(
                 cur.getColumnIndex(ContactsContract.Contacts._ID));
-        String name = cur.getString(cur.getColumnIndex(
-                ContactsContract.Contacts.DISPLAY_NAME));
-        nameList.add(name);
+        //String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+        //String name = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        //nameList.add(name);
         if (cur.getInt(cur.getColumnIndex( ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
           Cursor pCur = cr.query(
                   ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -96,6 +97,11 @@ public class GetcontactsPlugin implements FlutterPlugin, MethodCallHandler ,Acti
           while (pCur.moveToNext()) {
             String phoneNo = pCur.getString(pCur.getColumnIndex(
                     ContactsContract.CommonDataKinds.Phone.NUMBER));
+            String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            HashMap<String,String> map = new HashMap<>();
+            map.put("Name",name);
+            map.put("Phone",phoneNo);
+            nameList.add(map);
           }
           pCur.close();
         }
@@ -106,7 +112,6 @@ public class GetcontactsPlugin implements FlutterPlugin, MethodCallHandler ,Acti
     }
     return nameList;
   }
-
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
